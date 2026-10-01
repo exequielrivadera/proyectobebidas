@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Distribuidora - Bebidas, promociones y pedidos por WhatsApp.">
+    <title>Distribuidora | Bebidas y más</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- NAVEGACIÓN -->
+    <nav class="menu">
+        <a href="#inicio" class="logo">DISTRIBUIDORA</a>
+
+        <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <div class="menu-right">
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#promociones">Promociones</a></li>
+                <li><a href="#productos">Productos</a></li>
+                <li><a href="#nosotros">Nosotros</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+
+            <div class="cart-wrapper">
+                <button class="cart-button" id="openCart" aria-label="Abrir carrito">
+                    <span class="cart-icon">🛒</span>
+                    <span>Carrito</span>
+                </button>
+                <span class="cart-count" id="cartCount">0</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <header id="inicio" class="hero">
+        <div class="hero-content">
+            <span class="hero-kicker">Bebidas • Ofertas • Pedidos</span>
+            <h1>TODO PARA TU PEDIDO</h1>
+            <p>Gaseosas, aguas, cervezas, fernet, vodkas y jugos. Armá tu carrito y recibí tu pedido por WhatsApp.</p>
+            <div class="hero-actions">
+                <a href="#productos" class="btn btn-dark">Ver productos</a>
+                <a href="#promociones" class="btn btn-light">Ver promociones</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- PROMOCIONES DESTACADAS -->
+    <section id="promociones" class="promos-section">
+        <div class="section-heading section-heading-light">
+            <span>Promociones de hoy</span>
+            <h2>Más llevás, más ahorrás</h2>
+            <p>Las promociones se aplican automáticamente dentro de tu carrito.</p>
+        </div>
+
+        <div class="promo-grid">
+            <article class="promo-card promo-card-yellow">
+                <div class="promo-badge">10% OFF</div>
+                <span class="promo-small">Llevando 6 unidades</span>
+                <h3>COCA-COLA 3 L</h3>
+                <p>Agregá seis botellas al carrito y el descuento se aplica automáticamente.</p>
+                <button class="promo-link" data-promo-product="cocacola-3l">Agregar al carrito →</button>
+            </article>
+
+            <article class="promo-card promo-card-dark">
+                <div class="promo-badge">COMBO</div>
+                <span class="promo-small">Fernet + Coca-Cola 3 L</span>
+                <h3>COMBO CLÁSICO</h3>
+                <p>1 Fernet + 1 Coca-Cola 3 L por un precio promocional.</p>
+                <button class="promo-link promo-link-light" data-promo-combo="fernet-coca">Armar combo →</button>
+            </article>
+
+            <article class="promo-card promo-card-white">
+                <div class="promo-badge">8% OFF</div>
+                <span class="promo-small">Llevando 6 unidades</span>
+                <h3>QUILMES 473 ML</h3>
+                <p>Una promo pensada para compras por cantidad.</p>
+                <button class="promo-link" data-promo-product="quilmes-473">Agregar al carrito →</button>
+            </article>
+        </div>
+    </section>
+
+    <!-- PRODUCTOS -->
+    <section id="productos" class="productos">
+        <div class="section-heading">
+            <span>Catálogo</span>
+            <h2>Elegí tus bebidas</h2>
+            <p>Precios ilustrativos para esta demostración. Pueden variar según comercio y ubicación.</p>
+        </div>
+
+        <div class="category-bar" id="categoryBar" aria-label="Categorías de productos">
+            <button class="category-btn active" data-category="todos">Todos</button>
+            <button class="category-btn" data-category="aguas">Aguas</button>
+            <button class="category-btn" data-category="gaseosas">Gaseosas</button>
+            <button class="category-btn" data-category="cervezas">Cervezas</button>
+            <button class="category-btn" data-category="vodkas">Vodkas</button>
+            <button class="category-btn" data-category="fernet">Fernet</button>
+            <button class="category-btn" data-category="jugos">Jugos</button>
+        </div>
+
+        <div class="productos-grid" id="productosGrid"></div>
+    </section>
+
+    <!-- NOSOTROS -->
+    <section id="nosotros" class="nosotros">
+        <div class="nosotros-inner">
+            <div class="section-heading">
+                <!-- <span>Demo de e-commerce</span> -->
+                <h2>Comprá de forma simple</h2>
+            </div>
+            <!-- <p>
+                Esta tienda de demostración está pensada para mostrar una experiencia de compra rápida:
+                elegís tus productos, aprovechás promociones por cantidad o combos y enviás el pedido directamente por WhatsApp.
+            </p> -->
+        </div>
+    </section>
+
+    <!-- CONTACTO -->
+    <section id="contacto" class="contacto">
+        <div class="section-heading">
+            <span>¿Tenés una consulta?</span>
+            <h2>Contactanos</h2>
+        </div>
+
+        <div class="contact-info">
+            <p>📍 La Rioja, Argentina</p>
+            <p>📞 WhatsApp: +54 9 380 450 7584</p>
+            <p>🕐 Lunes a sábado · 08:00 a 20:00</p>
+        </div>
+
+        <a href="https://wa.me/5493804507584" class="btn btn-dark" target="_blank" rel="noopener">
+            Escribinos por WhatsApp
+        </a>
+
+        <div class="pulso-digital">
+            <p>Diseñada por</p>
+            <img src="img/pulsodigital_logo.png" alt="Pulso Digital" class="pulso-logo">
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 Distribuidora · Derechos Reservados</p>
+        <p>Precios y promociones son solo demostración.</p>
+    </footer>
+
+    <!-- WHATSAPP FLOTANTE -->
+    <a href="https://wa.me/5493804507584" class="whatsapp" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
+        <span>WhatsApp</span>
+    </a>
+
+    <!-- OVERLAY -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+
+    <!-- CARRITO -->
+    <aside class="cart-panel" id="cartPanel" aria-hidden="true">
+        <div class="cart-header">
+            <div>
+                <span class="cart-label">Tu selección</span>
+                <h2>Tu pedido</h2>
+            </div>
+            <button class="close-cart" id="closeCart" aria-label="Cerrar carrito">&times;</button>
+        </div>
+
+        <div class="cart-items" id="cartItems">
+            <div class="empty-cart">
+                <div class="empty-cart-icon">🛒</div>
+                <h3>Tu carrito está vacío</h3>
+                <p>Agregá algunos productos para comenzar tu pedido.</p>
+            </div>
+        </div>
+
+        <div class="cart-footer">
+            <div class="cart-summary-row">
+                <span>Subtotal</span>
+                <strong id="cartSubtotal">$0</strong>
+            </div>
+            <div class="cart-summary-row discount-row" id="discountRow">
+                <span>Descuentos</span>
+                <strong id="cartDiscount">-$0</strong>
+            </div>
+            <div class="cart-total">
+                <span>Total</span>
+                <strong id="cartTotal">$0</strong>
+            </div>
+
+            <button class="clear-cart" id="clearCart" type="button">Vaciar carrito</button>
+
+            <a class="checkout-btn" id="checkoutWhatsApp" href="#" target="_blank" rel="noopener">
+                Pedir por WhatsApp
+            </a>
+        </div>
+    </aside>
+
+    <script src="script.js"></script>
+</body>
+</html>
