@@ -1365,14 +1365,44 @@ footer p + p {
         min-height: 1.9em;
     }
 
-    .hero h1::before,
-    .hero h1::after {
-        white-space: normal;
-        padding: 0 5px;
+    /*
+       En móvil dividimos el título de forma más equilibrada:
+
+       TODO PARA  ← entra desde la izquierda
+       TU PEDIDO  → entra desde la derecha
+
+       Esto evita que las palabras se superpongan
+       en pantallas pequeñas.
+    */
+
+    .hero h1::before {
+        content: "TODO PARA";
+        top: 0;
+
+        white-space: nowrap;
+        padding: 0;
+
+        animation:
+            titleFromLeft
+            0.9s
+            cubic-bezier(0.22, 1, 0.36, 1)
+            0.10s
+            forwards;
     }
 
     .hero h1::after {
+        content: "TU PEDIDO";
         top: 0.95em;
+
+        white-space: nowrap;
+        padding: 0;
+
+        animation:
+            titleFromRight
+            0.9s
+            cubic-bezier(0.22, 1, 0.36, 1)
+            0.25s
+            forwards;
     }
 
     .hero-actions {
