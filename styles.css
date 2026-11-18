@@ -1122,7 +1122,12 @@ footer p + p {
     }
 
     .nav-links {
-        gap: 14px;
+        gap: 12px;
+    }
+
+    .admin-nav-button {
+        padding: 9px 11px;
+        font-size: .84rem;
     }
 
     .productos,
@@ -1280,6 +1285,30 @@ footer p + p {
 
     .nav-links li:last-child a {
         border-bottom: 0;
+    }
+
+    /* Acceso administrativo destacado dentro del menú hamburguesa */
+    .nav-links .admin-nav-item {
+        padding-top: 12px;
+        margin: 0;
+    }
+
+    .nav-links .admin-nav-button {
+        width: 100%;
+        min-height: 46px;
+        justify-content: center;
+        padding: 12px 16px;
+        border-radius: 10px;
+        background: var(--yellow);
+        color: var(--black);
+        font-size: 1rem;
+        font-weight: 800;
+        box-shadow: 0 4px 12px rgba(185, 130, 0, .2);
+    }
+
+    .nav-links .admin-nav-button:hover,
+    .nav-links .admin-nav-button:focus-visible {
+        background: var(--yellow-light);
     }
 
 
@@ -1578,4 +1607,12 @@ footer p + p {
     .checkout-btn {
         transition: none;
     }
+}
+
+/* Catálogo sin precios: aviso del carrito */
+.cart-note {
+    margin: 0 0 8px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    text-align: center;
 }

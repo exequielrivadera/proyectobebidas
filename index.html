@@ -30,6 +30,11 @@
                 <li><a href="#productos">Productos</a></li>
                 <li><a href="#nosotros">Nosotros</a></li>
                 <li><a href="#contacto">Contacto</a></li>
+                <li class="admin-nav-item">
+                    <button type="button" id="openAdminViewTop" class="admin-nav-button">
+                        <span aria-hidden="true">⚙</span> Administración
+                    </button>
+                </li>
             </ul>
 
             <div class="cart-wrapper">
@@ -45,7 +50,7 @@
     <!-- HERO -->
     <header id="inicio" class="hero">
         <div class="hero-content">
-            <span class="hero-kicker">Bebidas • Ofertas • Pedidos</span>
+            <span class="hero-kicker">Bebidas • Catálogo • Pedidos</span>
             <h1>TODO PARA TU PEDIDO</h1>
             <p>Gaseosas, aguas, cervezas, fernet, vodkas y jugos. Armá tu carrito y recibí tu pedido por WhatsApp.</p>
             <div class="hero-actions">
@@ -58,17 +63,17 @@
     <!-- PROMOCIONES DESTACADAS -->
     <section id="promociones" class="promos-section">
         <div class="section-heading section-heading-light">
-            <span>Promociones de hoy</span>
-            <h2>Más llevás, más ahorrás</h2>
-            <p>Las promociones se aplican automáticamente dentro de tu carrito.</p>
+            <span>Promociones y combos</span>
+            <h2>Consultá nuestras promociones</h2>
+            <p>Tenemos opciones y beneficios para compras por cantidad. Consultanos por WhatsApp.</p>
         </div>
 
         <div class="promo-grid">
             <article class="promo-card promo-card-yellow">
-                <div class="promo-badge">10% OFF</div>
-                <span class="promo-small">Llevando 6 unidades</span>
+                <div class="promo-badge">CONSULTAR</div>
+                <span class="promo-small">Promoción por cantidad</span>
                 <h3>COCA-COLA 3 L</h3>
-                <p>Agregá seis botellas al carrito y el descuento se aplica automáticamente.</p>
+                <p>Agregá Coca-Cola 3 L a tu selección y consultanos por disponibilidad y precio.</p>
                 <button class="promo-link" data-promo-product="cocacola-3l">Agregar al carrito →</button>
             </article>
 
@@ -76,15 +81,15 @@
                 <div class="promo-badge">COMBO</div>
                 <span class="promo-small">Fernet + Coca-Cola 3 L</span>
                 <h3>COMBO CLÁSICO</h3>
-                <p>1 Fernet + 1 Coca-Cola 3 L por un precio promocional.</p>
+                <p>Combiná Fernet con Coca-Cola 3 L. Consultanos por el precio del combo.</p>
                 <button class="promo-link promo-link-light" data-promo-combo="fernet-coca">Armar combo →</button>
             </article>
 
             <article class="promo-card promo-card-white">
-                <div class="promo-badge">8% OFF</div>
-                <span class="promo-small">Llevando 6 unidades</span>
+                <div class="promo-badge">CONSULTAR</div>
+                <span class="promo-small">Compras por cantidad</span>
                 <h3>QUILMES 473 ML</h3>
-                <p>Una promo pensada para compras por cantidad.</p>
+                <p>Consultá las condiciones especiales para compras por cantidad.</p>
                 <button class="promo-link" data-promo-product="quilmes-473">Agregar al carrito →</button>
             </article>
         </div>
@@ -95,7 +100,7 @@
         <div class="section-heading">
             <span>Catálogo</span>
             <h2>Elegí tus bebidas</h2>
-            <p>Precios ilustrativos para esta demostración. Pueden variar según comercio y ubicación.</p>
+            <p>Seleccioná los productos y las cantidades. Consultá precios y disponibilidad por WhatsApp.</p>
         </div>
 
         <div class="category-bar" id="categoryBar" aria-label="Categorías de productos">
@@ -106,6 +111,7 @@
             <button class="category-btn" data-category="vodkas">Vodkas</button>
             <button class="category-btn" data-category="fernet">Fernet</button>
             <button class="category-btn" data-category="jugos">Jugos</button>
+            <button class="category-btn" data-category="otros">Otros</button>
         </div>
 
         <div class="productos-grid" id="productosGrid"></div>
@@ -149,8 +155,9 @@
     </section>
 
     <footer>
+        <p><button type="button" id="openAdminView" class="admin-access-link">Administración</button></p>
         <p>© 2026 Distribuidora · Derechos Reservados</p>
-        <p>Precios y promociones son solo demostración.</p>
+        <p>Consultá precios, disponibilidad y promociones por WhatsApp.</p>
     </footer>
 
     <!-- WHATSAPP FLOTANTE -->
@@ -180,27 +187,65 @@
         </div>
 
         <div class="cart-footer">
-            <div class="cart-summary-row">
-                <span>Subtotal</span>
-                <strong id="cartSubtotal">$0</strong>
-            </div>
-            <div class="cart-summary-row discount-row" id="discountRow">
-                <span>Descuentos</span>
-                <strong id="cartDiscount">-$0</strong>
-            </div>
-            <div class="cart-total">
-                <span>Total</span>
-                <strong id="cartTotal">$0</strong>
-            </div>
-
-            <button class="clear-cart" id="clearCart" type="button">Vaciar carrito</button>
-
+            <p class="cart-note">Los precios y la disponibilidad se confirman por WhatsApp.</p>
+            <button class="clear-cart" id="clearCart" type="button">Vaciar selección</button>
             <a class="checkout-btn" id="checkoutWhatsApp" href="#" target="_blank" rel="noopener">
-                Pedir por WhatsApp
+                Consultar selección por WhatsApp
             </a>
         </div>
     </aside>
 
+    <!-- PANEL ADMINISTRATIVO INTEGRADO: se muestra sin abandonar index.html -->
+    <div id="adminViewShell" class="admin-view-shell" aria-hidden="true">
+        <iframe id="adminFrame" title="Panel de administración" src="admin.html"></iframe>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="supabase-client.js"></script>
     <script src="script.js"></script>
+    <script>
+      (() => {
+        const shell = document.getElementById('adminViewShell');
+        const openButtons = document.querySelectorAll('#openAdminView, #openAdminViewTop');
+        if (!shell || !openButtons.length) return;
+        const openAdmin = () => {
+          shell.classList.add('is-open');
+          shell.setAttribute('aria-hidden', 'false');
+          document.body.style.overflow = 'hidden';
+        };
+        const closeAdmin = () => {
+          shell.classList.remove('is-open');
+          shell.setAttribute('aria-hidden', 'true');
+          document.body.style.overflow = '';
+        };
+        openButtons.forEach(button => {
+          button.addEventListener('click', () => {
+            const navLinks = document.getElementById('navLinks');
+            const menuToggle = document.getElementById('menuToggle');
+            if (navLinks) navLinks.classList.remove('active');
+            if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false');
+            openAdmin();
+          });
+        });
+        window.addEventListener('message', event => {
+          if (event.source === document.getElementById('adminFrame')?.contentWindow && event.data?.type === 'close-admin-view') closeAdmin();
+        });
+        document.addEventListener('keydown', event => { if (event.key === 'Escape' && shell.classList.contains('is-open')) closeAdmin(); });
+      })();
+    </script>
+
 </body>
 </html>
+
+<style>
+.admin-nav-item{margin-left:2px}
+.admin-nav-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 15px;border:0;border-radius:999px;background:var(--yellow);color:var(--black);font:700 .9rem "Barlow",sans-serif;cursor:pointer;box-shadow:0 4px 12px rgba(185,130,0,.22);transition:background .2s ease,transform .2s ease,box-shadow .2s ease;white-space:nowrap}
+.admin-nav-button:hover{background:var(--yellow-light);transform:translateY(-2px);box-shadow:0 7px 16px rgba(185,130,0,.28)}
+.admin-nav-button span{font-size:1rem}
+.admin-access-link{border:0;background:transparent;color:inherit;opacity:.72;text-decoration:underline;text-underline-offset:3px;font:inherit;cursor:pointer;padding:0}
+.admin-access-link:hover{opacity:1}
+.admin-view-shell{position:fixed;inset:0;z-index:9999;background:#f6f6f2;display:none}
+.admin-view-shell.is-open{display:block}
+.admin-view-shell iframe{display:block;width:100%;height:100%;border:0;background:#f6f6f2}
+</style>
