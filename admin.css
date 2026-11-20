@@ -42,3 +42,8 @@
 
 /* Firma sutil de Pulso Digital en el panel */
 .side-footer{display:flex;flex-direction:column;align-items:flex-start;gap:5px}.pulso-footer-logo{display:block;width:118px;height:42px;object-fit:cover;object-position:center 47%;opacity:.88}
+
+/* Estado y motivo de desactivación del producto */
+.status-box { border: 1px solid rgba(255, 196, 0, .22); }
+.status-box select { width: 100%; }
+.inactive-reason { display:block; margin-top:4px; color:#c58b21; font-size:11px; }

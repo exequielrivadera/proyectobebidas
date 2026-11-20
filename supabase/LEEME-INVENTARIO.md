@@ -26,3 +26,8 @@ STOCK FICTICIO PARA SIMULACIONES DEL CATÁLOGO ACTUAL:
 3. Los valores son de prueba, no representan existencias reales. No vuelvas a ejecutar el script después de empezar a ajustar stocks manualmente: solo inicializa productos que todavía tienen el control de stock desactivado.
 4. El catálogo mostrará Disponible / Pocas unidades / Sin stock y el carrito validará las cantidades y packs contra el stock leído de Supabase.
 5. IMPORTANTE: agregar al carrito no descuenta stock. Abrir WhatsApp tampoco confirma una venta. La deducción definitiva y la liberación automática de reservas requieren el flujo transaccional de pedidos, que todavía no está implementado. Para estas pruebas actuales, el carrito permite simular selección y validar disponibilidad, no cerrar una venta real.
+
+## Desactivar productos y registrar motivo
+
+Ejecutá también `06_product_inactivation_reason.sql` en Supabase SQL Editor.
+Desde el formulario de edición podés desmarcar «Mostrar producto en el catálogo» y elegir el motivo: sin stock, ya no se vende, desactivación temporal u otro. El producto se conserva en la base y puede reactivarse editándolo nuevamente.
