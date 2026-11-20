@@ -172,17 +172,19 @@ function getCartCount() {
     return getCartEntries().reduce((total, item) => total + item.quantity, 0);
 }
 
-function addToCart(productId, quantity = 1, shouldOpen = false) {
+function addToCart(productId, quantity = 1, shouldOpen = false, unitMultiplier = 1) {
     const product = PRODUCTS[productId];
 
-    if (!product) return;
-
+    if (!product) { alert('Este producto no está disponible en el catálogo.'); return; }
+    const requestedUnits = quantity * unitMultiplier;
+    if (product.stock_enabled && requestedUnits > Number(product.stock_quantity ?? product.stock ?? 0)) { alert('No hay stock suficiente de ' + product.name + '.'); return; }
     if (cart[productId]) {
         cart[productId].quantity += quantity;
     } else {
         cart[productId] = {
             ...product,
-            quantity
+            quantity,
+            unitMultiplier
         };
     }
 
@@ -242,8 +244,10 @@ function renderProducts() {
                 <span class="product-category">${escapeHTML(getCategoryLabel(product.category))}</span>
                 <h3>${escapeHTML(product.name)}</h3>
                 <p>${escapeHTML(product.description || product.shortDescription || "")}</p>
+                ${product.stock_enabled ? `<small class="stock-label">${Number(product.stock_quantity||0)>0 ? (Number(product.stock_quantity)<=5?'Pocas unidades':'Disponible') : 'Sin stock'}</small>` : ''}
                 <div class="producto-bottom">
-                    <button class="add-cart" data-id="${product.id}">Agregar al pedido</button>
+                    ${product.sell_individual !== false ? `<button class="add-cart" data-id="${product.id}" ${product.stock_enabled && Number(product.stock_quantity||0)<1?'disabled':''}>Agregar unidad</button>` : ''}
+                    ${product.sell_packs === true && Number(product.pack_units)>=2 ? `<button class="add-cart add-pack" data-id="${product.id}" data-pack="${Number(product.pack_units)}" ${product.stock_enabled && Number(product.stock_quantity||0)<Number(product.pack_units)?'disabled':''}>Agregar pack x${Number(product.pack_units)}</button>` : ''}
                 </div>
             </div>
         </article>
@@ -291,7 +295,7 @@ function renderCart() {
             </div>
 
             <div class="cart-item-main">
-                <div class="cart-item-title">${escapeHTML(item.name)}</div>
+                <div class="cart-item-title">${escapeHTML(item.name)}${item.unitMultiplier>1?` · Pack x${item.unitMultiplier}`:''}</div>
                 <div class="cart-item-actions">
                     <div>
                         <div class="quantity-control">
@@ -315,7 +319,7 @@ function buildWhatsAppLink() {
     let message = "Hola! Quisiera consultar disponibilidad y precio de los siguientes productos:\n\n";
 
     entries.forEach(item => {
-        message += `• ${item.name} x${item.quantity}\n`;
+        message += `• ${item.name} x${item.quantity}${item.unitMultiplier>1?` (pack de ${item.unitMultiplier} unidades)`:''}\n`;
     });
 
     message += "\n¿Me podrían informar el importe y las promociones disponibles?\n\n¡Muchas gracias!";
@@ -337,20 +341,38 @@ function closeCart() {
     document.body.style.overflow = "";
 }
 
+function resolvePromoProduct(productId) {
+    if (PRODUCTS[productId]) return productId;
+    const aliases = {
+        "cocacola-3l": p => /coca.?cola/i.test(p.name) && /3\s*l/i.test(p.name),
+        "quilmes-473": p => /quilmes/i.test(p.name) && /473/i.test(p.name),
+        "fernet-750": p => /fernet/i.test(p.name) && /750/i.test(p.name)
+    };
+    const matcher = aliases[productId];
+    return matcher ? Object.values(PRODUCTS).find(matcher)?.id : null;
+}
+
 function addPromoProduct(productId) {
-    addToCart(productId, 1, false);
+    const resolved = resolvePromoProduct(productId);
+    if (!resolved) { alert('Uno de los productos de esta promoción no está disponible en el catálogo.'); return; }
+    addToCart(resolved, 1, true);
 }
 
 function addPromoCombo() {
-    addToCart("fernet-750", 1, false);
-    addToCart("cocacola-3l", 1, false);
+    const fernet = resolvePromoProduct("fernet-750");
+    const cola = resolvePromoProduct("cocacola-3l");
+    if (!fernet || !cola) { alert('No se puede armar el combo porque falta uno de sus productos en el catálogo.'); return; }
+    addToCart(fernet, 1, false);
+    addToCart(cola, 1, false);
     renderCart();
+    openCart();
 }
 
 document.addEventListener("click", event => {
     const addButton = event.target.closest(".add-cart");
     if (addButton) {
-        addToCart(addButton.dataset.id);
+        const pack = Number(addButton.dataset.pack || 1);
+        addToCart(addButton.dataset.id, 1, false, pack);
         return;
     }
 
@@ -372,7 +394,11 @@ cartItems.addEventListener("click", event => {
 
     const { action, id } = button.dataset;
 
-    if (action === "increase") changeQuantity(id, 1);
+    if (action === "increase") {
+        const item=cart[id]; const product=PRODUCTS[id];
+        if(product?.stock_enabled && (item.quantity+1)*(item.unitMultiplier||1)>Number(product.stock_quantity||0)){alert('No hay stock suficiente para aumentar esta cantidad.');return;}
+        changeQuantity(id, 1);
+    }
     if (action === "decrease") changeQuantity(id, -1);
     if (action === "remove") removeFromCart(id);
 });
@@ -429,7 +455,7 @@ async function refreshCatalogFromSupabase() {
     try {
         const { data, error } = await window.supabaseClient
             .from("products")
-            .select("id,name,category,description,image_url,active")
+            .select("id,name,category,description,image_url,active,stock_enabled,stock_quantity,sell_individual,sell_packs,pack_units")
             .eq("active", true)
             .order("created_at", { ascending: true });
         if (error) throw error;
@@ -439,7 +465,12 @@ async function refreshCatalogFromSupabase() {
                 name: row.name,
                 category: row.category,
                 description: row.description || "",
-                image: row.image_url || ""
+                image: row.image_url || "",
+                stock_enabled: row.stock_enabled === true,
+                stock_quantity: Number(row.stock_quantity || 0),
+                sell_individual: row.sell_individual !== false,
+                sell_packs: row.sell_packs === true,
+                pack_units: Number(row.pack_units || 0)
             }]));
             // Quitar del carrito productos que ya no están publicados.
             Object.keys(cart).forEach(id => { if (!PRODUCTS[id]) delete cart[id]; });

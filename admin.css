@@ -35,3 +35,7 @@
 .danger-confirm{background:#b72c2c;border:1px solid #d94b4b;color:#fff}
 @keyframes confirmIn{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
 @media(max-width:480px){.confirm-dialog{padding:25px 19px}.confirm-actions{flex-direction:column-reverse}.confirm-actions button{width:100%}}
+
+.inventory-box{border:1px solid #eee7d3;background:#fffaf0;border-radius:9px;padding:15px;gap:10px}.inventory-box>strong{font:20px Anton;color:#171717}.check-line{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:600;color:#444}.check-line input{width:auto;accent-color:#e3a900}.inventory-box small{font-size:11px;color:#777;font-weight:400}.login-back{display:block;margin-top:12px;text-align:center;color:#8b6b12;font-weight:700;font-size:12px;text-decoration:none}
+
+.stock-label{display:block;color:#8a6a12;font-size:11px;font-weight:700;margin:5px 0}.add-pack{margin-top:6px}

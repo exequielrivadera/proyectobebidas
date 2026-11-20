@@ -18,7 +18,7 @@
       <div class="stats"><article><span>PRODUCTOS ACTIVOS</span><strong id="statProducts">—</strong><small>En el catálogo público</small></article><article><span>CATEGORÍAS</span><strong id="statCategories">—</strong><small>Con productos cargados</small></article><article><span>IMÁGENES</span><strong id="statImages">—</strong><small>Productos con imagen</small></article></div>
       <section class="panel-section" id="productos"><div class="section-head"><div><p class="eyebrow">INVENTARIO DIGITAL</p><h2>Productos</h2><p>Estos productos se muestran en el catálogo público.</p></div><button class="primary" id="newProduct">＋ Agregar producto</button></div>
         <div class="toolbar"><label class="searchbox">⌕ <input id="filterProducts" type="search" placeholder="Buscar producto..."></label><select id="filterCategory"><option value="todos">Todas las categorías</option><option value="aguas">Aguas</option><option value="gaseosas">Gaseosas</option><option value="cervezas">Cervezas</option><option value="vodkas">Vodkas</option><option value="fernet">Fernet</option><option value="jugos">Jugos</option><option value="otros">Otros</option></select></div>
-        <div class="table-wrap"><table><thead><tr><th>PRODUCTO</th><th>CATEGORÍA</th><th>IMAGEN</th><th>ESTADO</th><th></th></tr></thead><tbody id="productsTable"></tbody></table><div class="empty-state" id="emptyState" hidden>No hay productos que coincidan con la búsqueda.</div></div>
+        <div class="table-wrap"><table><thead><tr><th>PRODUCTO</th><th>CATEGORÍA</th><th>IMAGEN</th><th>STOCK</th><th>VENTA</th><th>ESTADO</th><th></th></tr></thead><tbody id="productsTable"></tbody></table><div class="empty-state" id="emptyState" hidden>No hay productos que coincidan con la búsqueda.</div></div>
       </section>
     </section>
   </main>
@@ -33,7 +33,9 @@
         <div class="image-pane" id="pane-url"><div class="inline-search"><input id="imageUrl" type="url" placeholder="https://sitio.com/imagen.jpg"><button type="button" class="secondary" id="useImageUrl">Usar imagen</button></div><p class="hint">Usá una dirección pública de imagen. Verificá que tengas permiso para publicarla.</p></div>
         <div class="selected-image" id="selectedImageBox" hidden><div class="selected-preview-frame"><img id="selectedImagePreview" alt="Vista previa"><span class="selected-preview-placeholder" id="selectedImagePlaceholder" aria-label="Imagen no disponible" hidden>?</span></div><div><strong>Imagen seleccionada</strong><small id="selectedImageSource">Lista para guardar</small><button type="button" class="text-button" id="removeImage">Quitar imagen</button></div></div>
       </label>
-      <label class="field span-2">Descripción breve<input id="productShortDescription" maxlength="120" placeholder="Ej. Gaseosa sabor naranja"></label></div>
+      <label class="field span-2">Descripción breve<input id="productShortDescription" maxlength="120" placeholder="Ej. Gaseosa sabor naranja"></label>
+      <div class="field span-2 inventory-box"><strong>Inventario y modalidades de venta</strong><label class="check-line"><input type="checkbox" id="stockEnabled"> Controlar stock de este producto</label><label class="field">Unidades disponibles<input type="number" id="productStock" min="0" step="1" value="0" placeholder="Ej. 120"></label><label class="check-line"><input type="checkbox" id="sellIndividual" checked> Permitir venta individual</label><label class="check-line"><input type="checkbox" id="sellPacks"> Permitir venta por packs</label><label class="field">Unidades por pack<input type="number" id="packUnits" min="2" step="1" value="6" placeholder="Ej. 18"></label><small>La cantidad por pack es libre. El inventario siempre se administra en unidades individuales.</small></div>
+      </div>
       <div class="form-error" id="formError" role="alert"></div><div class="modal-actions"><button type="button" class="secondary" id="cancelForm">Cancelar</button><button type="submit" class="primary" id="saveProduct">Guardar producto</button></div>
     </form>
   </section></div>
@@ -45,7 +47,7 @@
       <label>Contraseña<input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Tu contraseña"></label>
       <p class="login-error" id="loginError" role="alert"></p>
       <button class="primary login-submit" type="submit" id="loginSubmit">Ingresar</button>
-      <small>Acceso exclusivo para usuarios autorizados.</small>
+      <small>Acceso exclusivo para usuarios autorizados.</small><a class="login-back" href="index.html">← Volver al catálogo</a>
     </form>
   </div>
   <div class="confirm-backdrop" id="deleteConfirm" aria-hidden="true">
