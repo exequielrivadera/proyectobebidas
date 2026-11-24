@@ -47,3 +47,48 @@
 .status-box { border: 1px solid rgba(255, 196, 0, .22); }
 .status-box select { width: 100%; }
 .inactive-reason { display:block; margin-top:4px; color:#c58b21; font-size:11px; }
+
+/* Nuevos módulos de stock y pedidos */
+.panel-section{scroll-margin-top:24px}.panel-section .stats{margin:18px 0}.panel-section h3{font:24px Anton,sans-serif;margin:24px 0 4px}.panel-section .table-wrap{margin-bottom:24px}.panel-section td button{padding:7px 10px;border:1px solid #ddd;border-radius:6px;background:#fff;font:700 12px Barlow;cursor:pointer}.panel-section td button:hover{border-color:#d5a900}.panel-section td button.delete{color:#a52222}.panel-section td small{display:block;color:#777;margin-top:3px}.side-link{cursor:pointer}
+
+/* Reposición de stock: modal de confirmación con identidad visual del catálogo */
+.section-help{display:block;margin-top:7px;color:#8a8068;font-size:11px;line-height:1.4}
+.restock-dialog{position:relative;width:min(500px,100%);max-height:92vh;overflow:auto;text-align:left;padding:28px;background:#191919;border-top:4px solid var(--yellow)}
+.restock-dialog .restock-close{position:absolute;right:16px;top:16px;background:#2b2b2b;color:#fff;border:1px solid #555}
+.restock-dialog h2{text-align:left;margin-bottom:7px}
+.restock-intro{font:500 13px/1.5 Barlow,sans-serif!important;color:#c7c7c7!important;margin-bottom:17px!important;padding-right:22px}
+.restock-product-card{display:flex;align-items:center;gap:14px;padding:12px;background:#242424;border:1px solid #4a4128;border-radius:10px;margin:17px 0 19px}
+.restock-product-card img,.restock-no-image{width:70px;height:70px;flex:0 0 70px;object-fit:contain;border-radius:7px;background:#fff;padding:5px}
+.restock-no-image{display:grid;place-items:center;color:#a17a11;font-size:30px;background:#302d23}
+.restock-product-info{display:grid;gap:5px;min-width:0}
+.restock-product-info small{font-size:9px;letter-spacing:1.2px;font-weight:800;color:#d6ad32}
+.restock-product-info strong{font:22px Anton,sans-serif;color:#fff;overflow-wrap:anywhere}
+.restock-product-info span{font:12px Barlow,sans-serif;color:#c7c7c7}
+.restock-form{display:grid;gap:12px}
+.restock-form .field{color:#f0e7ce}
+.restock-form .field input,.restock-form .field select,.restock-form .field textarea{width:100%;border:1px solid #555;background:#252525;color:#fff;border-radius:7px;padding:11px 12px;font:14px Barlow;resize:vertical}
+.restock-form .field input:focus,.restock-form .field select:focus,.restock-form .field textarea:focus{outline:2px solid #b98b12;border-color:#e3a900}
+.restock-lock-note{margin:0;padding:10px 12px;border-radius:7px;background:#2a281f;border:1px solid #51431f;color:#e3ca83;font:12px/1.5 Barlow}
+.restock-dialog .form-error{margin:0;min-height:0}
+.restock-dialog .confirm-actions{justify-content:flex-end;margin-top:5px}
+.restock-submit{min-width:150px;padding:12px 16px;border:1px solid #f0c331;border-radius:7px;background:var(--yellow);color:#171717;font:800 14px Barlow;cursor:pointer}
+.restock-submit:disabled{opacity:.6;cursor:wait}
+@media(max-width:480px){.restock-dialog{padding:23px 17px}.restock-dialog .confirm-actions{flex-direction:column-reverse}.restock-dialog .confirm-actions button{width:100%}.restock-product-card img,.restock-no-image{width:58px;height:58px;flex-basis:58px}}
+
+/* Recordatorio modal obligatorio de pedidos */
+.order-reminder-backdrop{position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.82);display:none;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(5px)}
+.order-reminder-backdrop.open{display:flex}
+.order-reminder-card{width:min(100%,520px);max-height:92vh;overflow:auto;background:#171717;color:#fff;border:1px solid rgba(250,204,21,.55);border-radius:22px;padding:26px;box-shadow:0 25px 90px rgba(0,0,0,.6)}
+.reminder-top{display:flex;align-items:center;justify-content:space-between;color:#facc15;font-size:.75rem;font-weight:900;letter-spacing:.1em}.reminder-top span:last-child{font-size:1.6rem}
+.order-reminder-card h2{font-size:1.65rem;line-height:1.15;margin:16px 0 8px}.reminder-intro,.reminder-note{color:#d1d5db;font-size:.92rem;line-height:1.5}
+.reminder-order{background:#292929;border-radius:14px;padding:16px;margin:18px 0}.reminder-order>strong{display:block;margin-bottom:12px;color:#facc15}.reminder-order div{display:flex;justify-content:space-between;gap:12px;margin:7px 0;font-size:.88rem}.reminder-order div span{color:#bfc3c9}.reminder-order ul{padding-left:20px;margin:12px 0 0;color:#f3f4f6;font-size:.9rem}.reminder-action{width:100%;border:0;border-radius:12px;padding:15px 12px;margin-top:10px;font-weight:900;cursor:pointer}.reminder-action:disabled{opacity:.55;cursor:wait}.reminder-action.confirm{background:#166534;color:white}.reminder-action.extend{background:#292929;color:#fff;border:1px solid #facc15}.reminder-action.cancel{background:#7f1d1d;color:white}.order-reminder-card small{display:block;color:#c5c5c5;text-align:center;margin-top:14px;line-height:1.45}
+@media(max-width:520px){.order-reminder-card{padding:20px;border-radius:18px}.order-reminder-card h2{font-size:1.4rem}}
+/* Gestión de combos comunes */
+.cart-combo-label{display:block;color:#9a6b00;font-size:12px;font-weight:700;margin-top:3px}
+.promo-combo-items{font-size:13px;opacity:.85;font-weight:700}
+#comboModal .modal{max-width:680px}
+#comboForm .form-grid{margin-top:18px}
+#comboForm input[type="checkbox"]{accent-color:#e4b900}
+
+/* Acción de descarga del remito interno */
+.remito-button{background:#f0c400!important;color:#171717!important;border:1px solid #d4ad00!important;font-weight:800!important;white-space:nowrap}.remito-button:hover{filter:brightness(1.06)}

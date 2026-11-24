@@ -11,7 +11,7 @@
 <body>
   <header class="topbar"><a class="brand" href="index.html"><span class="brand-mark">D</span><span>DISTRIBUIDORA<small>ADMINISTRACIÓN</small></span></a><div class="top-actions"><span class="demo-pill">MODO PRUEBA LOCAL</span><button class="public-link" id="exitAdminView" type="button" style="border:0;background:transparent;cursor:pointer;font:700 13px Barlow">← Volver al catálogo</button></div></header>
   <main class="layout" id="layout">
-    <aside class="sidebar"><div class="side-label">GESTIÓN</div><a class="side-link active" href="#resumen">▦ <span>Resumen</span></a><a class="side-link" href="#productos">▤ <span>Productos</span></a><div class="side-note"><strong>Próximamente</strong><span>Escáner de códigos de barras, usuarios y sucursales.</span></div><div class="side-footer">Diseñada por<br><img class="pulso-footer-logo" src="img/pulsodigital_logo.png" alt="Pulso Digital"></div></aside>
+    <aside class="sidebar"><div class="side-label">GESTIÓN</div><a class="side-link active" href="#resumen">▦ <span>Resumen</span></a><a class="side-link" href="#productos">▤ <span>Productos</span></a><a class="side-link" href="#stock">▣ <span>Stock</span></a><a class="side-link" href="#pedidos">▧ <span>Pedidos</span></a><a class="side-link" href="#combos">✦ <span>Combos comunes</span></a><div class="side-note"><strong>Próximamente</strong><span>Escáner de códigos de barras, usuarios y sucursales.</span></div><div class="side-footer">Diseñada por<br><img class="pulso-footer-logo" src="img/pulsodigital_logo.png" alt="Pulso Digital"></div></aside>
     <section class="content">
       <div class="welcome" id="resumen"><div><p class="eyebrow">PANEL DE CONTROL</p><h1>Administrá tu catálogo.</h1><p class="sub">Agregá productos, elegí sus imágenes y mantené tu tienda actualizada.</p></div><button class="primary" id="newProductTop">＋ Nuevo producto</button></div>
       <div class="notice"><strong>Catálogo online:</strong> los productos y las imágenes se guardan en Supabase y se comparten entre dispositivos.</div>
@@ -20,8 +20,30 @@
         <div class="toolbar"><label class="searchbox">⌕ <input id="filterProducts" type="search" placeholder="Buscar producto..."></label><select id="filterCategory"><option value="todos">Todas las categorías</option><option value="aguas">Aguas</option><option value="gaseosas">Gaseosas</option><option value="cervezas">Cervezas</option><option value="vodkas">Vodkas</option><option value="fernet">Fernet</option><option value="jugos">Jugos</option><option value="otros">Otros</option></select></div>
         <div class="table-wrap"><table><thead><tr><th>PRODUCTO</th><th>CATEGORÍA</th><th>IMAGEN</th><th>STOCK</th><th>VENTA</th><th>ESTADO</th><th></th></tr></thead><tbody id="productsTable"></tbody></table><div class="empty-state" id="emptyState" hidden>No hay productos que coincidan con la búsqueda.</div></div>
       </section>
+      <section class="panel-section" id="stock"><div class="section-head"><div><p class="eyebrow">CONTROL DE INVENTARIO</p><h2>Stock</h2><p>Existencias, reservas y reposiciones de mercadería.</p><small class="section-help">“Recargar vista” actualiza los datos que ves. Para sumar mercadería, usá “Reponer”.</small></div><button class="primary" id="refreshStock" title="Vuelve a consultar Supabase y actualiza los datos visibles">↻ Recargar vista</button></div>
+        <div class="stats"><article><span>UNIDADES DISPONIBLES</span><strong id="stockAvailable">—</strong><small>Stock físico menos reservas</small></article><article><span>STOCK BAJO</span><strong id="stockLow">—</strong><small>En o por debajo del mínimo</small></article><article><span>SIN STOCK</span><strong id="stockEmpty">—</strong><small>Productos controlados</small></article></div>
+        <div class="toolbar"><label class="searchbox">⌕ <input id="stockSearch" type="search" placeholder="Buscar en inventario..."></label><select id="stockFilter"><option value="all">Todos</option><option value="low">Stock bajo</option><option value="empty">Sin stock</option><option value="reserved">Con reservas</option></select></div>
+        <div class="table-wrap"><table><thead><tr><th>PRODUCTO</th><th>FÍSICO</th><th>RESERVADO</th><th>DISPONIBLE</th><th>MÍNIMO</th><th>ESTADO</th><th></th></tr></thead><tbody id="stockTable"></tbody></table><div class="empty-state" id="stockEmptyState" hidden>No hay productos para mostrar.</div></div>
+        <div class="section-head"><div><h3>Movimientos recientes</h3><p>Entradas, ajustes, ventas y liberaciones de reservas.</p></div></div><div class="table-wrap"><table><thead><tr><th>FECHA</th><th>PRODUCTO</th><th>MOVIMIENTO</th><th>CANTIDAD</th><th>MOTIVO / PROVEEDOR</th></tr></thead><tbody id="movementTable"></tbody></table></div>
+      </section>
+      <section class="panel-section" id="pedidos"><div class="section-head"><div><p class="eyebrow">VENTAS Y CONSULTAS</p><h2>Pedidos</h2><p>Revisá los pedidos, confirmá ventas o cancelá reservas.</p></div><button class="secondary" id="refreshOrders">Actualizar pedidos</button></div>
+        <div class="toolbar"><label class="searchbox">⌕ <input id="orderSearch" type="search" placeholder="Buscar por número o cliente..."></label><select id="orderFilter"><option value="all">Todos los estados</option><option value="pending">Pendientes</option><option value="confirmed">Confirmados</option><option value="cancelled">Cancelados</option><option value="expired">Vencidos</option></select></div>
+        <div class="table-wrap"><table><thead><tr><th>PEDIDO</th><th>FECHA</th><th>DETALLE</th><th>ESTADO</th><th>VENCE</th><th>ACCIONES</th></tr></thead><tbody id="ordersTable"></tbody></table><div class="empty-state" id="ordersEmpty" hidden>No hay pedidos registrados.</div></div>
+      </section>
+      <section class="panel-section" id="combos"><div class="section-head"><div><p class="eyebrow">VENTA SUGERIDA</p><h2>Combos comunes</h2><p>Armá combinaciones habituales, como Fernet + Coca-Cola o Vodka + Baggio.</p></div><button class="primary" id="newCombo">＋ Crear combo</button></div>
+        <div class="table-wrap"><table><thead><tr><th>COMBO</th><th>PRODUCTOS</th><th>ESTADO</th><th></th></tr></thead><tbody id="combosTable"></tbody></table><div class="empty-state" id="combosEmpty" hidden>Todavía no hay combos configurados.</div></div>
+      </section>
     </section>
   </main>
+  <div class="modal-backdrop" id="comboModal" aria-hidden="true"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="comboModalTitle"><div class="modal-head"><div><p class="eyebrow">CATÁLOGO</p><h2 id="comboModalTitle">Crear combo</h2></div><button class="icon-btn" id="closeComboModal" type="button">×</button></div>
+    <form id="comboForm"><input type="hidden" id="comboId"><div class="form-grid">
+      <label class="field span-2">Nombre del combo<input id="comboName" required maxlength="80" placeholder="Ej. Fernet + Coca-Cola"></label>
+      <label class="field span-2">Descripción<input id="comboDescription" maxlength="180" placeholder="Ej. Fernet 750 ml + Coca-Cola 3 L"></label>
+      <label class="field">Primer producto<select id="comboProduct1" required></select></label><label class="field">Cantidad<input id="comboQty1" type="number" min="1" max="99" value="1" required></label>
+      <label class="field">Segundo producto<select id="comboProduct2" required></select></label><label class="field">Cantidad<input id="comboQty2" type="number" min="1" max="99" value="1" required></label>
+      <label class="field span-2" style="display:flex;align-items:center;gap:10px"><input id="comboActive" type="checkbox" checked style="width:auto"> Mostrar este combo en el catálogo</label>
+    </div><p class="hint">Los productos se agregan juntos al carrito y cada componente descuenta sus propias unidades del stock cuando se confirma el pedido.</p><p class="form-error" id="comboError"></p><div class="modal-actions"><button type="button" class="secondary" id="cancelCombo">Cancelar</button><button class="primary" id="saveCombo" type="submit">Guardar combo</button></div></form>
+  </section></div>
   <div class="modal-backdrop" id="productModal" aria-hidden="true"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-head"><div><p class="eyebrow">CATÁLOGO</p><h2 id="modalTitle">Agregar producto</h2></div><button class="icon-btn" id="closeModal" aria-label="Cerrar">×</button></div>
     <form id="productForm"><input type="hidden" id="productId">
       <div class="form-grid"><label class="field span-2">Nombre del producto<input id="productName" required maxlength="90" placeholder="Ej. Manaos Naranja 2.25 L"></label>
@@ -35,7 +57,7 @@
       </label>
       <label class="field span-2">Descripción breve<input id="productShortDescription" maxlength="120" placeholder="Ej. Gaseosa sabor naranja"></label>
       <div class="field span-2 inventory-box status-box"><strong>Estado del producto en el catálogo</strong><label class="check-line"><input type="checkbox" id="productActive" checked> Mostrar producto en el catálogo</label><label class="field" id="inactiveReasonWrap" hidden>Motivo por el que se desactiva<select id="inactiveReason"><option value="">Seleccioná un motivo</option><option value="sin_stock">Sin stock / falta de stock</option><option value="no_se_vende">Ya no lo vendemos</option><option value="temporal">Desactivación temporal</option><option value="otro">Otro motivo</option></select></label><small>Al desactivarlo, dejará de aparecer en el catálogo público, pero no se eliminará y podrás volver a activarlo cuando quieras.</small></div>
-      <div class="field span-2 inventory-box"><strong>Inventario y modalidades de venta</strong><label class="check-line"><input type="checkbox" id="stockEnabled"> Controlar stock de este producto</label><label class="field">Unidades disponibles<input type="number" id="productStock" min="0" step="1" value="0" placeholder="Ej. 120"></label><label class="check-line"><input type="checkbox" id="sellIndividual" checked> Permitir venta individual</label><label class="check-line"><input type="checkbox" id="sellPacks"> Permitir venta por packs</label><label class="field">Unidades por pack<input type="number" id="packUnits" min="2" step="1" value="6" placeholder="Ej. 18"></label><small>La cantidad por pack es libre. El inventario siempre se administra en unidades individuales.</small></div>
+      <div class="field span-2 inventory-box"><strong>Inventario y modalidades de venta</strong><label class="check-line"><input type="checkbox" id="stockEnabled"> Controlar stock de este producto</label><label class="field">Unidades disponibles<input type="number" id="productStock" min="0" step="1" value="0" placeholder="Ej. 120"></label><label class="field">Avisar cuando queden menos de<input type="number" id="stockMinimum" min="0" step="1" value="5"></label><label class="check-line"><input type="checkbox" id="sellIndividual" checked> Permitir venta individual</label><label class="check-line"><input type="checkbox" id="sellPacks"> Permitir venta por packs</label><label class="field">Unidades por pack<input type="number" id="packUnits" min="2" step="1" value="6" placeholder="Ej. 18"></label><small>La cantidad por pack es libre. El inventario siempre se administra en unidades individuales.</small></div>
       </div>
       <div class="form-error" id="formError" role="alert"></div><div class="modal-actions"><button type="button" class="secondary" id="cancelForm">Cancelar</button><button type="submit" class="primary" id="saveProduct">Guardar producto</button></div>
     </form>
@@ -60,6 +82,43 @@
       <div class="confirm-actions"><button type="button" class="secondary" id="cancelDelete">Cancelar</button><button type="button" class="danger-confirm" id="acceptDelete">Sí, eliminar</button></div>
     </section>
   </div>
+  <div class="confirm-backdrop" id="restockModal" aria-hidden="true">
+    <section class="confirm-dialog restock-dialog" role="dialog" aria-modal="true" aria-labelledby="restockTitle">
+      <button type="button" class="icon-btn restock-close" id="closeRestock" aria-label="Cerrar">×</button>
+      <p class="eyebrow">CONTROL DE INVENTARIO</p>
+      <h2 id="restockTitle">Reponer stock</h2>
+      <p class="restock-intro">Confirmá que seleccionaste el producto correcto antes de registrar el ingreso.</p>
+      <div class="restock-product-card">
+        <img id="restockProductImage" src="" alt="Imagen del producto" hidden>
+        <div class="restock-no-image" id="restockNoImage">▣</div>
+        <div class="restock-product-info"><small>PRODUCTO SELECCIONADO</small><strong id="restockProductName">Producto</strong><span id="restockCurrentStock">Stock actual: —</span></div>
+      </div>
+      <form id="restockForm" class="restock-form">
+        <input type="hidden" id="restockProductId">
+        <label class="field">Cantidad que ingresa <input type="number" id="restockQuantity" min="1" step="1" required placeholder="Ej. 24" inputmode="numeric"></label>
+        <label class="field">Motivo del ingreso <select id="restockReason" required><option value="">Seleccioná un motivo</option><option value="Compra a proveedor">Compra a proveedor</option><option value="Devolución de mercadería">Devolución de mercadería</option><option value="Ajuste positivo de inventario">Ajuste positivo de inventario</option><option value="Otro ingreso">Otro ingreso</option></select></label>
+        <label class="field">Proveedor <input type="text" id="restockSupplier" maxlength="100" placeholder="Opcional"></label>
+        <label class="field">Observaciones <textarea id="restockNotes" rows="2" maxlength="300" placeholder="Detalle adicional (opcional)"></textarea></label>
+        <p class="restock-lock-note">El nombre y la identidad del producto no se pueden modificar desde esta ventana. Solo se registra el ingreso de stock.</p>
+        <p class="form-error" id="restockError" role="alert"></p>
+        <div class="confirm-actions"><button type="button" class="secondary" id="cancelRestock">Cancelar</button><button type="submit" class="restock-submit" id="saveRestock">＋ Registrar ingreso</button></div>
+      </form>
+    </section>
+  </div>
+
+  <div class="order-reminder-backdrop" id="orderReminderModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="reminderTitle">
+    <section class="order-reminder-card">
+      <div class="reminder-top"><span id="reminderBadge">PRIMER AVISO</span><span aria-hidden="true">🔔</span></div>
+      <h2 id="reminderTitle">¿Se concretó este pedido?</h2>
+      <p class="reminder-intro">Hay un pedido de WhatsApp que necesita confirmación para actualizar el inventario.</p>
+      <div class="reminder-order"><strong id="reminderOrderNumber">Pedido</strong><div><span>Cliente</span><b id="reminderCustomer">—</b></div><div><span>Teléfono</span><b id="reminderPhone">—</b></div><ul id="reminderItems"></ul></div>
+      <p id="reminderCount" class="reminder-note"></p>
+      <button type="button" class="reminder-action confirm" id="reminderConfirm">SÍ, CONFIRMAR VENTA</button>
+      <button type="button" class="reminder-action extend" id="reminderExtend">NO, DAR 5 MINUTOS MÁS</button>
+      <button type="button" class="reminder-action cancel" id="reminderCancel" hidden>CANCELAR PEDIDO</button>
+      <small>Elegí una opción para resolver el aviso. La ventana no se cierra al hacer clic afuera ni con Escape.</small>
+    </section>
+  </div>
   <div class="toast" id="toast" role="status"></div>
   <script>
     document.getElementById('exitAdminView')?.addEventListener('click', () => {
@@ -67,6 +126,7 @@
       else window.location.href = 'index.html';
     });
   </script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
 <script src="supabase-client.js"></script>

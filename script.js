@@ -150,6 +150,7 @@ const STORAGE_KEY = "distribuidora-demo-carrito";
 
 let cart = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
 let activeCategory = "todos";
+let COMMON_COMBOS = [];
 
 const cartPanel = document.getElementById("cartPanel");
 const cartOverlay = document.getElementById("cartOverlay");
@@ -177,7 +178,7 @@ function addToCart(productId, quantity = 1, shouldOpen = false, unitMultiplier =
 
     if (!product) { alert('Este producto no está disponible en el catálogo.'); return; }
     const requestedUnits = quantity * unitMultiplier;
-    if (product.stock_enabled && requestedUnits > Number(product.stock_quantity ?? product.stock ?? 0)) { alert('No hay stock suficiente de ' + product.name + '.'); return; }
+    if (product.stock_enabled && requestedUnits > (Number(product.stock_quantity ?? product.stock ?? 0)-Number(product.stock_reserved||0))) { alert('No hay stock suficiente de ' + product.name + '.'); return; }
     if (cart[productId]) {
         cart[productId].quantity += quantity;
     } else {
@@ -244,10 +245,10 @@ function renderProducts() {
                 <span class="product-category">${escapeHTML(getCategoryLabel(product.category))}</span>
                 <h3>${escapeHTML(product.name)}</h3>
                 <p>${escapeHTML(product.description || product.shortDescription || "")}</p>
-                ${product.stock_enabled ? `<small class="stock-label">${Number(product.stock_quantity||0)>0 ? (Number(product.stock_quantity)<=5?'Pocas unidades':'Disponible') : 'Sin stock'}</small>` : ''}
+                ${product.stock_enabled ? `<small class="stock-label">${Math.max(0,Number(product.stock_quantity||0)-Number(product.stock_reserved||0))>0 ? (Math.max(0,Number(product.stock_quantity||0)-Number(product.stock_reserved||0))<=Number(product.stock_minimum||5)?'Pocas unidades':'Disponible') : 'Sin stock'}</small>` : ''}
                 <div class="producto-bottom">
-                    ${product.sell_individual !== false ? `<button class="add-cart" data-id="${product.id}" ${product.stock_enabled && Number(product.stock_quantity||0)<1?'disabled':''}>Agregar unidad</button>` : ''}
-                    ${product.sell_packs === true && Number(product.pack_units)>=2 ? `<button class="add-cart add-pack" data-id="${product.id}" data-pack="${Number(product.pack_units)}" ${product.stock_enabled && Number(product.stock_quantity||0)<Number(product.pack_units)?'disabled':''}>Agregar pack x${Number(product.pack_units)}</button>` : ''}
+                    ${product.sell_individual !== false ? `<button class="add-cart" data-id="${product.id}" ${product.stock_enabled && (Number(product.stock_quantity||0)-Number(product.stock_reserved||0))<1?'disabled':''}>Agregar unidad</button>` : ''}
+                    ${product.sell_packs === true && Number(product.pack_units)>=2 ? `<button class="add-cart add-pack" data-id="${product.id}" data-pack="${Number(product.pack_units)}" ${product.stock_enabled && (Number(product.stock_quantity||0)-Number(product.stock_reserved||0))<Number(product.pack_units)?'disabled':''}>Agregar pack x${Number(product.pack_units)}</button>` : ''}
                 </div>
             </div>
         </article>
@@ -295,7 +296,7 @@ function renderCart() {
             </div>
 
             <div class="cart-item-main">
-                <div class="cart-item-title">${escapeHTML(item.name)}${item.unitMultiplier>1?` · Pack x${item.unitMultiplier}`:''}</div>
+                <div class="cart-item-title">${escapeHTML(item.name)}${item.unitMultiplier>1?` · Pack x${item.unitMultiplier}`:''}</div>${(item.comboNames||[]).length?`<small class="cart-combo-label">Combo: ${escapeHTML([...new Set(item.comboNames)].join(', '))}</small>`:''}
                 <div class="cart-item-actions">
                     <div>
                         <div class="quantity-control">
@@ -312,6 +313,23 @@ function renderCart() {
 
     checkoutWhatsApp.classList.remove("disabled");
     checkoutWhatsApp.href = buildWhatsAppLink();
+}
+
+async function createOrderAndOpenWhatsApp(){
+ const entries=getCartEntries();if(!entries.length)return;
+ if(!window.supabaseClient){alert('No se pudo conectar con el sistema de pedidos.');return;}
+ const popup=window.open('about:blank','_blank');
+ try{
+  const payload=entries.map(item=>({product_id:item.id,quantity:item.quantity,unit_multiplier:item.unitMultiplier||1}));
+  const {data,error}=await window.supabaseClient.rpc('create_reserved_order',{p_tenant_slug:'distribuidora',p_customer_name:'Pedido web',p_customer_phone:'',p_items:payload,p_notes:null});
+  if(error)throw error;
+  const orderLabel=String(data||'').slice(0,8).toUpperCase();
+  let message=`Hola! Envié el pedido #${orderLabel}. ¿Me confirman disponibilidad y precio?\n\n`;
+  entries.forEach(item=>{const combo=(item.comboNames||[]).length?` [Combo: ${[...new Set(item.comboNames)].join(', ')}]`:'';message+=`• ${item.name} x${item.quantity}${item.unitMultiplier>1?` (pack de ${item.unitMultiplier} unidades)`:''}${combo}\n`;});
+  message+='\nQuedo atento/a a la confirmación. ¡Gracias!';
+  if(popup)popup.location.href=`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;else location.href=`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  clearCart();
+ }catch(err){if(popup)popup.close();alert(err.message||'No se pudo reservar el pedido. Revisá el stock e intentá nuevamente.');}
 }
 
 function buildWhatsAppLink() {
@@ -341,31 +359,23 @@ function closeCart() {
     document.body.style.overflow = "";
 }
 
-function resolvePromoProduct(productId) {
-    if (PRODUCTS[productId]) return productId;
-    const aliases = {
-        "cocacola-3l": p => /coca.?cola/i.test(p.name) && /3\s*l/i.test(p.name),
-        "quilmes-473": p => /quilmes/i.test(p.name) && /473/i.test(p.name),
-        "fernet-750": p => /fernet/i.test(p.name) && /750/i.test(p.name)
-    };
-    const matcher = aliases[productId];
-    return matcher ? Object.values(PRODUCTS).find(matcher)?.id : null;
+function renderCommonCombos(){
+ const grid=document.getElementById('promoGrid');if(!grid)return;
+ if(!COMMON_COMBOS.length){grid.innerHTML='<p class="no-products">Por el momento no hay combos disponibles.</p>';return;}
+ grid.innerHTML=COMMON_COMBOS.map(combo=>{const items=(combo.items||[]).map(i=>{const p=PRODUCTS[i.product_id];return p?`${escapeHTML(p.name)} × ${Number(i.quantity)||1}`:null}).filter(Boolean);return `<article class="promo-card promo-card-dark"><div class="promo-badge">COMBO</div><span class="promo-small">Combinación clásica</span><h3>${escapeHTML(combo.name)}</h3><p>${escapeHTML(combo.description||items.join(' + '))}</p><p class="promo-combo-items">${items.join(' · ')}</p><button class="promo-link promo-link-light" data-common-combo="${combo.id}">Agregar combo al carrito →</button></article>`}).join('');
 }
-
-function addPromoProduct(productId) {
-    const resolved = resolvePromoProduct(productId);
-    if (!resolved) { alert('Uno de los productos de esta promoción no está disponible en el catálogo.'); return; }
-    addToCart(resolved, 1, true);
+function addCommonCombo(comboId){
+ const combo=COMMON_COMBOS.find(c=>c.id===comboId);if(!combo)return;
+ const components=(combo.items||[]).map(i=>({id:i.product_id,quantity:Number(i.quantity)||1,product:PRODUCTS[i.product_id]}));
+ if(components.some(x=>!x.product)){alert('Este combo tiene productos que ya no están disponibles. Avisá a la distribuidora.');return;}
+ const required={};components.forEach(x=>required[x.id]=(required[x.id]||0)+x.quantity);
+ for(const [id,qty] of Object.entries(required)){const p=PRODUCTS[id];const inCart=cart[id]?.quantity||0;const available=Number(p.stock_quantity??p.stock??0)-Number(p.stock_reserved||0);if(p.stock_enabled&&qty+inCart>available){alert(`No hay stock suficiente de ${p.name} para completar el combo.`);return;}}
+ components.forEach(x=>{if(cart[x.id]){cart[x.id].quantity+=x.quantity;cart[x.id].comboNames=[...(cart[x.id].comboNames||[]),combo.name];}else{cart[x.id]={...x.product,quantity:x.quantity,unitMultiplier:1,comboNames:[combo.name]};}});
+ saveCart();renderCart();openCart();
 }
-
-function addPromoCombo() {
-    const fernet = resolvePromoProduct("fernet-750");
-    const cola = resolvePromoProduct("cocacola-3l");
-    if (!fernet || !cola) { alert('No se puede armar el combo porque falta uno de sus productos en el catálogo.'); return; }
-    addToCart(fernet, 1, false);
-    addToCart(cola, 1, false);
-    renderCart();
-    openCart();
+async function loadCommonCombos(){
+ if(!window.supabaseClient)return;
+ try{const {data,error}=await window.supabaseClient.from('common_combos').select('id,name,description,items,active').eq('active',true).order('created_at',{ascending:false});if(error)throw error;COMMON_COMBOS=data||[];renderCommonCombos();}catch(error){console.warn('No se pudieron cargar los combos:',error.message);const grid=document.getElementById('promoGrid');if(grid)grid.innerHTML='<p class="no-products">No fue posible cargar los combos. Consultá por WhatsApp.</p>';}
 }
 
 document.addEventListener("click", event => {
@@ -376,16 +386,8 @@ document.addEventListener("click", event => {
         return;
     }
 
-    const promoProduct = event.target.closest("[data-promo-product]");
-    if (promoProduct) {
-        addPromoProduct(promoProduct.dataset.promoProduct);
-        return;
-    }
-
-    const promoCombo = event.target.closest("[data-promo-combo]");
-    if (promoCombo) {
-        addPromoCombo();
-    }
+    const commonCombo = event.target.closest("[data-common-combo]");
+    if (commonCombo) addCommonCombo(commonCombo.dataset.commonCombo);
 });
 
 cartItems.addEventListener("click", event => {
@@ -396,7 +398,7 @@ cartItems.addEventListener("click", event => {
 
     if (action === "increase") {
         const item=cart[id]; const product=PRODUCTS[id];
-        if(product?.stock_enabled && (item.quantity+1)*(item.unitMultiplier||1)>Number(product.stock_quantity||0)){alert('No hay stock suficiente para aumentar esta cantidad.');return;}
+        if(product?.stock_enabled && (item.quantity+1)*(item.unitMultiplier||1)>(Number(product.stock_quantity||0)-Number(product.stock_reserved||0))){alert('No hay stock suficiente para aumentar esta cantidad.');return;}
         changeQuantity(id, 1);
     }
     if (action === "decrease") changeQuantity(id, -1);
@@ -415,6 +417,7 @@ document.querySelectorAll(".category-btn").forEach(button => {
     });
 });
 
+checkoutWhatsApp.addEventListener("click", event=>{event.preventDefault();if(!checkoutWhatsApp.classList.contains("disabled"))createOrderAndOpenWhatsApp();});
 document.getElementById("openCart").addEventListener("click", openCart);
 document.getElementById("closeCart").addEventListener("click", closeCart);
 cartOverlay.addEventListener("click", closeCart);
@@ -455,7 +458,7 @@ async function refreshCatalogFromSupabase() {
     try {
         const { data, error } = await window.supabaseClient
             .from("products")
-            .select("id,name,category,description,image_url,active,stock_enabled,stock_quantity,sell_individual,sell_packs,pack_units")
+            .select("id,name,category,description,image_url,active,stock_enabled,stock_quantity,stock_reserved,stock_minimum,sell_individual,sell_packs,pack_units")
             .eq("active", true)
             .order("created_at", { ascending: true });
         if (error) throw error;
@@ -468,6 +471,7 @@ async function refreshCatalogFromSupabase() {
                 image: row.image_url || "",
                 stock_enabled: row.stock_enabled === true,
                 stock_quantity: Number(row.stock_quantity || 0),
+                stock_reserved: Number(row.stock_reserved || 0),
                 sell_individual: row.sell_individual !== false,
                 sell_packs: row.sell_packs === true,
                 pack_units: Number(row.pack_units || 0)
@@ -478,9 +482,11 @@ async function refreshCatalogFromSupabase() {
             renderProducts();
             renderCart();
         }
+        await loadCommonCombos();
     } catch (error) {
         console.warn("No se pudo actualizar el catálogo online; se conserva la vista disponible.", error);
     }
 }
 refreshCatalogFromSupabase();
+loadCommonCombos();
 window.setInterval(refreshCatalogFromSupabase, 30000);

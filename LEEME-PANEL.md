@@ -36,3 +36,22 @@ No vuelvas a ejecutar los SQL iniciales si ya creaste estas tablas y políticas.
 - La sesión queda persistida en el navegador. Para cerrar sesión usá **Cerrar sesión**.
 - El catálogo público conserva los productos de muestra locales si la base todavía no devuelve productos; al iniciar sesión por primera vez se carga el catálogo inicial en la base.
 - Esto es una versión de prueba comercial. Antes de producción se recomienda revisar límites del plan, backups, privacidad, gestión de contraseñas y proceso de alta de nuevas empresas.
+
+## Combos comunes configurables
+
+1. Ejecutá `supabase/09_common_combos.sql` en Supabase SQL Editor.
+2. Ingresá a Administración y abrí la sección **Combos comunes**.
+3. Elegí **Crear combo**, indicá nombre y descripción, seleccioná dos productos y sus cantidades.
+4. Guardá. El combo activo aparecerá en la sección Promociones del catálogo público.
+5. Al agregarlo, todos sus componentes se incorporan juntos al carrito y se valida el stock total de cada producto. El pedido conserva cada producto como línea individual para que la reserva y el descuento de inventario sigan usando los productos reales.
+
+Los combos se pueden editar, activar o desactivar. No tienen precio propio: el cliente consulta el importe por WhatsApp.
+
+
+## Remitos internos en PDF
+- Al confirmar una venta, en la pestaña Pedidos aparece el botón **Descargar remito PDF**.
+- El remito usa el mismo número de pedido y muestra fecha del pedido, fecha de confirmación, productos, cantidades y presentación por pack. Los combos aparecen desglosados según los componentes registrados en el pedido.
+- No solicita ni imprime nombre o teléfono del cliente. No incluye precios.
+- Está identificado como **COMPROBANTE INTERNO - NO FISCAL**.
+- El PDF se genera desde el detalle histórico guardado en el pedido y puede descargarse nuevamente desde otro dispositivo mientras el pedido y sus ítems sigan disponibles. No se guarda una copia binaria en Storage: el archivo se vuelve a generar al descargarlo.
+- El generador PDF se carga desde jsDelivr, por lo que la descarga requiere conexión a internet.
